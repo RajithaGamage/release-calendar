@@ -1,0 +1,1146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project Release Calendar 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .view-controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .view-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            background: #f3f4f6;
+            color: #1f2937;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .view-btn.active {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .month-selector {
+            padding: 12px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            background: white;
+            color: #1f2937;
+            transition: all 0.3s;
+        }
+
+        .month-selector:hover {
+            border-color: #3b82f6;
+        }
+
+        .legend {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border-radius: 20px;
+        }
+
+        .legend-color {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+        }
+
+        .critical { background: #dc2626; }
+        .normal { background: #16a34a; }
+        .holiday { background: #f59e0b; }
+        .today { background: #3b82f6; }
+
+        /* Year View */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .month-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+        }
+
+        .month-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+
+        .month-header {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 4px solid #3b82f6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .month-stats {
+            font-size: 12px;
+            color: #6b7280;
+            font-weight: 400;
+        }
+
+        .days-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .day-name {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #6b7280;
+            padding: 8px 4px;
+            text-transform: uppercase;
+        }
+
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            grid-auto-rows: minmax(90px, auto);
+        }
+
+        .day-cell {
+            min-height: 90px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            padding: 6px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            overflow: hidden;
+        }
+
+        .day-cell:hover {
+            border-color: #3b82f6;
+            transform: scale(1.02);
+            z-index: 10;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+            overflow: visible;
+        }
+
+        .day-cell.empty {
+            border: none;
+            cursor: default;
+            background: transparent;
+        }
+
+        .day-cell.empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .day-number {
+            font-weight: 700;
+            color: #1f2937;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .day-cell.has-release {
+            border-width: 3px;
+        }
+
+        .day-cell.has-holiday {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #f59e0b;
+        }
+
+        .day-cell.today-mark {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-color: #3b82f6;
+            border-width: 3px;
+        }
+
+        .day-cell.today-mark .day-number {
+            color: #1e3a8a;
+        }
+
+        .release-indicators {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-top: 2px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .release-tag {
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: white;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+
+        .release-tag.critical {
+            background: #dc2626;
+        }
+
+        .release-tag.normal {
+            background: #16a34a;
+        }
+
+        .holiday-tag {
+            font-size: 8px;
+            padding: 2px 5px;
+            border-radius: 4px;
+            background: #f59e0b;
+            color: white;
+            font-weight: 600;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1f2937;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            white-space: normal;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+            z-index: 100;
+            min-width: 200px;
+            max-width: 300px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 8px solid transparent;
+            border-top-color: #1f2937;
+        }
+
+        .day-cell:hover .tooltip {
+            opacity: 1;
+        }
+
+        .tooltip-section {
+            margin-bottom: 8px;
+        }
+
+        .tooltip-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .tooltip-title {
+            font-weight: 700;
+            margin-bottom: 4px;
+            color: #fbbf24;
+        }
+
+        .tooltip-item {
+            margin: 4px 0;
+            padding-left: 8px;
+            border-left: 2px solid;
+        }
+
+        .tooltip-item.critical {
+            border-left-color: #dc2626;
+        }
+
+        .tooltip-item.normal {
+            border-left-color: #16a34a;
+        }
+
+        .tooltip-item.holiday {
+            border-left-color: #f59e0b;
+        }
+
+        .count-badge {
+            background: #dc2626;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+            position: absolute;
+            top: 4px;
+            right: 4px;
+        }
+
+        /* Single Month View */
+        .single-month-view {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .single-month-view.active {
+            display: block;
+        }
+
+        .single-month-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .month-title {
+            font-size: 42px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .month-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        .large-calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+
+        .large-day-name {
+            text-align: center;
+            font-size: 14px;
+            font-weight: 700;
+            color: #6b7280;
+            padding: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .large-day-cell {
+            min-height: 120px;
+            border: 3px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .large-day-cell:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.2);
+        }
+
+        .large-day-cell.empty {
+            border: none;
+            background: transparent;
+            cursor: default;
+        }
+
+        .large-day-cell.empty:hover {
+            transform: none;
+            box-shadow: none;
+        }
+
+        .large-day-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+
+        .large-day-cell.has-holiday {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-color: #f59e0b;
+        }
+
+        .large-day-cell.today-mark {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border-color: #3b82f6;
+            border-width: 4px;
+        }
+
+        .large-release-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            flex: 1;
+        }
+
+        .large-release-tag {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            color: white;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .large-holiday-tag {
+            font-size: 11px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: #f59e0b;
+            color: white;
+            font-weight: 600;
+        }
+
+        /* List View */
+        .list-view {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .list-view.active {
+            display: block;
+        }
+
+        .list-view h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+        }
+
+        .release-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .release-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 5px solid;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background: #f9fafb;
+        }
+
+        .release-item:hover {
+            transform: translateX(6px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .release-item.critical {
+            border-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        .release-item.normal {
+            border-color: #16a34a;
+            background: #f0fdf4;
+        }
+
+        .release-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .release-badge.critical {
+            background: #dc2626;
+        }
+
+        .release-badge.normal {
+            background: #16a34a;
+        }
+
+        .release-info {
+            flex: 1;
+        }
+
+        .release-name {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 4px;
+            font-size: 16px;
+        }
+
+        .release-date {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .days-until {
+            font-weight: 700;
+            color: #3b82f6;
+            font-size: 16px;
+            text-align: right;
+            min-width: 80px;
+        }
+
+        .view-container {
+            display: none;
+        }
+
+        .view-container.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .month-card {
+                padding: 15px;
+            }
+
+            .day-cell {
+                min-height: 60px;
+                padding: 4px;
+            }
+
+            .day-number {
+                font-size: 12px;
+            }
+
+            .release-tag {
+                font-size: 8px;
+                padding: 2px 4px;
+            }
+
+            .large-calendar {
+                gap: 4px;
+            }
+
+            .large-day-cell {
+                min-height: 100px;
+                padding: 8px;
+            }
+
+            .large-day-number {
+                font-size: 18px;
+            }
+
+            .single-month-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .month-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🗓️ Project Release Calendar 2026</h1>
+            <p>Track project releases and Sri Lankan public holidays throughout the year</p>
+            
+            <div class="view-controls">
+                <button class="view-btn active" onclick="switchView('year')">📅 Year View</button>
+                <button class="view-btn" onclick="switchView('month')">📆 Month View</button>
+                <button class="view-btn" onclick="switchView('list')">📋 List View</button>
+                
+                <select class="month-selector" id="monthSelector" onchange="changeMonth()" style="display: none;">
+                    <option value="0">January</option>
+                    <option value="1">February</option>
+                    <option value="2">March</option>
+                    <option value="3">April</option>
+                    <option value="4">May</option>
+                    <option value="5">June</option>
+                    <option value="6">July</option>
+                    <option value="7">August</option>
+                    <option value="8">September</option>
+                    <option value="9">October</option>
+                    <option value="10">November</option>
+                    <option value="11">December</option>
+                </select>
+            </div>
+            
+            <div class="legend">
+                <div class="legend-item">
+                    <div class="legend-color critical"></div>
+                    <span><strong>Critical Release</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color normal"></div>
+                    <span><strong>Normal Release</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color holiday"></div>
+                    <span><strong>Public Holiday</strong></span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color today"></div>
+                    <span><strong>Today</strong></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Year View -->
+        <div id="yearView" class="view-container active">
+            <div class="calendar-grid" id="calendarGrid"></div>
+        </div>
+
+        <!-- Month View -->
+        <div id="monthView" class="view-container">
+            <div class="single-month-view active" id="singleMonthView">
+                <div class="single-month-header">
+                    <div class="month-title" id="currentMonthTitle"></div>
+                    <div class="month-nav">
+                        <button class="nav-btn" onclick="previousMonth()">← Previous</button>
+                        <button class="nav-btn" onclick="nextMonth()">Next →</button>
+                    </div>
+                </div>
+                <div class="large-calendar" id="largeCalendar"></div>
+            </div>
+        </div>
+
+        <!-- List View -->
+        <div id="listView" class="view-container">
+            <div class="list-view active">
+                <h2>📅 Upcoming Releases (Next 60 Days)</h2>
+                <div class="release-list" id="releaseList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // EDIT YOUR PROJECTS HERE
+        // ========================================
+        const projects = [
+            { name: "Project Alpha", date: "2026-01-15", critical: true, version: "v2.0" },
+            { name: "Project Beta", date: "2026-01-15", critical: false, version: "v1.5" },
+            { name: "Project Gamma", date: "2026-02-05", critical: true, version: "v3.0" },
+            { name: "Project Delta", date: "2026-02-10", critical: false, version: "v1.2" },
+            { name: "Project Epsilon", date: "2026-03-25", critical: true, version: "v2.1" },
+            { name: "Project Zeta", date: "2026-04-12", critical: false, version: "v1.8" },
+            { name: "Project Eta", date: "2026-04-12", critical: true, version: "v4.0" },
+            { name: "Project Theta", date: "2026-05-02", critical: false, version: "v2.3" },
+            { name: "Project Iota", date: "2026-06-20", critical: true, version: "v3.5" },
+            { name: "Project Kappa", date: "2026-07-15", critical: false, version: "v1.9" },
+            { name: "Project Lambda", date: "2026-08-08", critical: true, version: "v2.8" },
+            { name: "Project Mu", date: "2026-09-10", critical: false, version: "v1.4" },
+            { name: "Project Nu", date: "2026-10-22", critical: true, version: "v3.2" },
+            { name: "Project Xi", date: "2026-11-14", critical: false, version: "v2.0" },
+            { name: "Project Omicron", date: "2026-12-18", critical: true, version: "v4.1" },
+        ];
+
+        // ========================================
+        // SRI LANKAN PUBLIC HOLIDAYS 2026
+        // ========================================
+        const sriLankanHolidays = [
+            { date: "2026-01-14", name: "Thai Pongal" },
+            { date: "2026-01-15", name: "Duruthu Poya" },
+            { date: "2026-02-04", name: "Independence Day" },
+            { date: "2026-02-13", name: "Navam Poya" },
+            { date: "2026-03-14", name: "Maha Shivarathri" },
+            { date: "2026-03-15", name: "Medin Poya" },
+            { date: "2026-04-10", name: "Good Friday" },
+            { date: "2026-04-13", name: "Sinhala & Tamil New Year Eve" },
+            { date: "2026-04-14", name: "Sinhala & Tamil New Year Day" },
+            { date: "2026-04-13", name: "Bak Poya" },
+            { date: "2026-05-01", name: "May Day" },
+            { date: "2026-05-12", name: "Vesak Poya" },
+            { date: "2026-05-13", name: "Day following Vesak Poya" },
+            { date: "2026-06-11", name: "Poson Poya" },
+            { date: "2026-07-10", name: "Esala Poya" },
+            { date: "2026-08-09", name: "Nikini Poya" },
+            { date: "2026-09-07", name: "Binara Poya" },
+            { date: "2026-09-17", name: "Milad-un-Nabi" },
+            { date: "2026-10-07", name: "Vap Poya" },
+            { date: "2026-10-19", name: "Deepavali" },
+            { date: "2026-11-05", name: "Il Poya" },
+            { date: "2026-12-05", name: "Unduvap Poya" },
+            { date: "2026-12-25", name: "Christmas Day" },
+        ];
+
+        const months = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        
+        const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const today = new Date();
+        let currentMonthIndex = today.getMonth();
+
+        function getDaysInMonth(year, month) {
+            return new Date(year, month + 1, 0).getDate();
+        }
+
+        function getFirstDayOfMonth(year, month) {
+            return new Date(year, month, 1).getDay();
+        }
+
+        function getProjectsForDate(dateStr) {
+            return projects.filter(p => p.date === dateStr);
+        }
+
+        function getHolidaysForDate(dateStr) {
+            return sriLankanHolidays.filter(h => h.date === dateStr);
+        }
+
+        function switchView(view) {
+            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.view-container').forEach(container => container.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            
+            if (view === 'year') {
+                document.getElementById('yearView').classList.add('active');
+                document.getElementById('monthSelector').style.display = 'none';
+            } else if (view === 'month') {
+                document.getElementById('monthView').classList.add('active');
+                document.getElementById('monthSelector').style.display = 'block';
+                renderSingleMonth(currentMonthIndex);
+            } else if (view === 'list') {
+                document.getElementById('listView').classList.add('active');
+                document.getElementById('monthSelector').style.display = 'none';
+            }
+        }
+
+        function changeMonth() {
+            currentMonthIndex = parseInt(document.getElementById('monthSelector').value);
+            renderSingleMonth(currentMonthIndex);
+        }
+
+        function previousMonth() {
+            currentMonthIndex = (currentMonthIndex - 1 + 12) % 12;
+            document.getElementById('monthSelector').value = currentMonthIndex;
+            renderSingleMonth(currentMonthIndex);
+        }
+
+        function nextMonth() {
+            currentMonthIndex = (currentMonthIndex + 1) % 12;
+            document.getElementById('monthSelector').value = currentMonthIndex;
+            renderSingleMonth(currentMonthIndex);
+        }
+
+        function renderSingleMonth(monthIdx) {
+            const year = 2026;
+            const largeCalendar = document.getElementById('largeCalendar');
+            const monthTitle = document.getElementById('currentMonthTitle');
+            
+            monthTitle.textContent = `${months[monthIdx]} 2026`;
+            largeCalendar.innerHTML = '';
+
+            // Day headers
+            dayNames.forEach(day => {
+                const dayName = document.createElement('div');
+                dayName.className = 'large-day-name';
+                dayName.textContent = day;
+                largeCalendar.appendChild(dayName);
+            });
+
+            const daysInMonth = getDaysInMonth(year, monthIdx);
+            const firstDay = getFirstDayOfMonth(year, monthIdx);
+
+            // Empty cells
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'large-day-cell empty';
+                largeCalendar.appendChild(emptyCell);
+            }
+
+            // Day cells
+            for (let day = 1; day <= daysInMonth; day++) {
+                const dateStr = `2026-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayProjects = getProjectsForDate(dateStr);
+                const dayHolidays = getHolidaysForDate(dateStr);
+                
+                const dayCell = document.createElement('div');
+                dayCell.className = 'large-day-cell';
+
+                const cellDate = new Date(2026, monthIdx, day);
+                if (cellDate.toDateString() === today.toDateString()) {
+                    dayCell.classList.add('today-mark');
+                }
+
+                if (dayHolidays.length > 0) {
+                    dayCell.classList.add('has-holiday');
+                }
+
+                const dayNumber = document.createElement('div');
+                dayNumber.className = 'large-day-number';
+                dayNumber.textContent = day;
+                dayCell.appendChild(dayNumber);
+
+                if (dayProjects.length > 0 || dayHolidays.length > 0) {
+                    const releaseList = document.createElement('div');
+                    releaseList.className = 'large-release-list';
+
+                    dayProjects.forEach(project => {
+                        const tag = document.createElement('div');
+                        tag.className = `large-release-tag ${project.critical ? 'critical' : 'normal'}`;
+                        tag.textContent = `${project.name} ${project.version}`;
+                        releaseList.appendChild(tag);
+                    });
+
+                    dayHolidays.forEach(holiday => {
+                        const tag = document.createElement('div');
+                        tag.className = 'large-holiday-tag';
+                        tag.textContent = holiday.name;
+                        releaseList.appendChild(tag);
+                    });
+
+                    dayCell.appendChild(releaseList);
+                }
+
+                largeCalendar.appendChild(dayCell);
+            }
+        }
+
+        function renderYearView() {
+            const calendarGrid = document.getElementById('calendarGrid');
+            calendarGrid.innerHTML = '';
+            
+            months.forEach((monthName, monthIdx) => {
+                const year = 2026;
+                const daysInMonth = getDaysInMonth(year, monthIdx);
+                const firstDay = getFirstDayOfMonth(year, monthIdx);
+
+                const monthReleases = projects.filter(p => {
+                    const d = new Date(p.date);
+                    return d.getFullYear() === year && d.getMonth() === monthIdx;
+                });
+
+                const monthCard = document.createElement('div');
+                monthCard.className = 'month-card';
+
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'month-header';
+                
+                const monthTitle = document.createElement('span');
+                monthTitle.textContent = monthName;
+                monthHeader.appendChild(monthTitle);
+
+                if (monthReleases.length > 0) {
+                    const monthStats = document.createElement('span');
+                    monthStats.className = 'month-stats';
+                    monthStats.textContent = `${monthReleases.length} release${monthReleases.length > 1 ? 's' : ''}`;
+                    monthHeader.appendChild(monthStats);
+                }
+
+                monthCard.appendChild(monthHeader);
+
+                const daysHeader = document.createElement('div');
+                daysHeader.className = 'days-header';
+                dayNames.forEach(day => {
+                    const dayName = document.createElement('div');
+                    dayName.className = 'day-name';
+                    dayName.textContent = day;
+                    daysHeader.appendChild(dayName);
+                });
+                monthCard.appendChild(daysHeader);
+
+                const daysGrid = document.createElement('div');
+                daysGrid.className = 'days-grid';
+
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'day-cell empty';
+                    daysGrid.appendChild(emptyCell);
+                }
+
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dateStr = `2026-${String(monthIdx + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                    const dayProjects = getProjectsForDate(dateStr);
+                    const dayHolidays = getHolidaysForDate(dateStr);
+                    
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'day-cell';
+
+                    const cellDate = new Date(2026, monthIdx, day);
+                    if (cellDate.toDateString() === today.toDateString()) {
+                        dayCell.classList.add('today-mark');
+                    }
+
+                    if (dayHolidays.length > 0) {
+                        dayCell.classList.add('has-holiday');
+                    }
+
+                    if (dayProjects.length > 0) {
+                        dayCell.classList.add('has-release');
+                    }
+
+                    const dayNumber = document.createElement('div');
+                    dayNumber.className = 'day-number';
+                    dayNumber.textContent = day;
+                    dayCell.appendChild(dayNumber);
+
+                    if (dayProjects.length > 0 || dayHolidays.length > 0) {
+                        const indicators = document.createElement('div');
+                        indicators.className = 'release-indicators';
+
+                        const visibleProjects = dayProjects.slice(0, 3);
+                        visibleProjects.forEach(project => {
+                            const tag = document.createElement('div');
+                            tag.className = `release-tag ${project.critical ? 'critical' : 'normal'}`;
+                            tag.textContent = project.name;
+                            indicators.appendChild(tag);
+                        });
+
+                        if (dayProjects.length > 3) {
+                            const countBadge = document.createElement('div');
+                            countBadge.className = 'count-badge';
+                            countBadge.textContent = `+${dayProjects.length - 3}`;
+                            dayCell.appendChild(countBadge);
+                        }
+
+                        if (dayHolidays.length > 0) {
+                            const holidayTag = document.createElement('div');
+                            holidayTag.className = 'holiday-tag';
+                            holidayTag.textContent = dayHolidays[0].name;
+                            indicators.appendChild(holidayTag);
+                        }
+
+                        dayCell.appendChild(indicators);
+
+                        const tooltip = document.createElement('div');
+                        tooltip.className = 'tooltip';
+
+                        if (dayProjects.length > 0) {
+                            const releaseSection = document.createElement('div');
+                            releaseSection.className = 'tooltip-section';
+                            
+                            const releaseTitle = document.createElement('div');
+                            releaseTitle.className = 'tooltip-title';
+                            releaseTitle.textContent = `📦 Releases (${dayProjects.length}):`;
+                            releaseSection.appendChild(releaseTitle);
+
+                            dayProjects.forEach(project => {
+                                const item = document.createElement('div');
+                                item.className = `tooltip-item ${project.critical ? 'critical' : 'normal'}`;
+                                item.textContent = `${project.name} ${project.version} ${project.critical ? '⚠️' : ''}`;
+                                releaseSection.appendChild(item);
+                            });
+
+                            tooltip.appendChild(releaseSection);
+                        }
+
+                        if (dayHolidays.length > 0) {
+                            const holidaySection = document.createElement('div');
+                            holidaySection.className = 'tooltip-section';
+                            
+                            const holidayTitle = document.createElement('div');
+                            holidayTitle.className = 'tooltip-title';
+                            holidayTitle.textContent = '🎉 Holidays:';
+                            holidaySection.appendChild(holidayTitle);
+
+                            dayHolidays.forEach(holiday => {
+                                const item = document.createElement('div');
+                                item.className = 'tooltip-item holiday';
+                                item.textContent = holiday.name;
+                                holidaySection.appendChild(item);
+                            });
+
+                            tooltip.appendChild(holidaySection);
+                        }
+
+                        dayCell.appendChild(tooltip);
+                    }
+
+                    daysGrid.appendChild(dayCell);
+                }
+
+                monthCard.appendChild(daysGrid);
+                calendarGrid.appendChild(monthCard);
+            });
+        }
+
+        function renderUpcomingReleases() {
+            const releaseList = document.getElementById('releaseList');
+            const sixtyDaysFromNow = new Date();
+            sixtyDaysFromNow.setDate(sixtyDaysFromNow.getDate() + 60);
+
+            const upcoming = projects
+                .map(p => ({
+                    ...p,
+                    dateObj: new Date(p.date),
+                    daysUntil: Math.ceil((new Date(p.date) - today) / (1000 * 60 * 60 * 24))
+                }))
+                .filter(p => p.dateObj >= today && p.dateObj <= sixtyDaysFromNow)
+                .sort((a, b) => a.dateObj - b.dateObj);
+
+            if (upcoming.length === 0) {
+                releaseList.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">No releases in the next 60 days</p>';
+                return;
+            }
+
+            releaseList.innerHTML = '';
+            upcoming.forEach(release => {
+                const item = document.createElement('div');
+                item.className = `release-item ${release.critical ? 'critical' : 'normal'}`;
+
+                const badge = document.createElement('div');
+                badge.className = `release-badge ${release.critical ? 'critical' : 'normal'}`;
+                badge.textContent = release.critical ? '🔴 Critical' : '🟢 Normal';
+                item.appendChild(badge);
+
+                const info = document.createElement('div');
+                info.className = 'release-info';
+                
+                const name = document.createElement('div');
+                name.className = 'release-name';
+                name.textContent = `${release.name} ${release.version}`;
+                info.appendChild(name);
+
+                const date = document.createElement('div');
+                date.className = 'release-date';
+                date.textContent = new Date(release.date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    month: 'long', 
+                    day: 'numeric', 
+                    year: 'numeric' 
+                });
+                info.appendChild(date);
+
+                item.appendChild(info);
+
+                const daysUntil = document.createElement('div');
+                daysUntil.className = 'days-until';
+                daysUntil.textContent = release.daysUntil === 0 ? '🎯 Today!' : 
+                                       release.daysUntil === 1 ? '⏰ Tomorrow' :
+                                       release.daysUntil < 0 ? '✅ Released' :
+                                       `${release.daysUntil} days`;
+                item.appendChild(daysUntil);
+
+                releaseList.appendChild(item);
+            });
+        }
+
+        // Initialize
+        renderYearView();
+        renderUpcomingReleases();
+        renderSingleMonth(currentMonthIndex);
+        document.getElementById('monthSelector').value = currentMonthIndex;
+    </script>
+</body>
+</html>
